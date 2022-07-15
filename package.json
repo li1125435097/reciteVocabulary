@@ -1,0 +1,27 @@
+{
+  "name": "recitevocabulary",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+	  "start": "ENV=development DEBUG=recite* nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/li1125435097/reciteVocabulary.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/li1125435097/reciteVocabulary/issues"
+  },
+  "homepage": "https://github.com/li1125435097/reciteVocabulary#readme",
+  "dependencies": {
+    "express": "^4.18.1",
+	"debug": "^4.3.4"
+  },
+  "devDependencies": {
+  }
+}
