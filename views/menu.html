@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>考研词汇通</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<link rel="stylesheet" href="/lib/mui/mui.min.css">
+		<link rel="stylesheet" href="/lib/mui/icons-extra.css">
+		<style>
+			.mui-content{height: 100vh;display: flex;align-items: center;flex-direction: column;justify-content: center;}
+			.myheader{font-size: 32px;line-height: 32px;margin-bottom: 30px;}
+		</style>
+	</head>
+
+	<body>
+
+		
+		<div class="mui-content">
+			<div class="myheader">高效背单词</div>
+			<ul class="mui-table-view mui-grid-view mui-grid-9">
+				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="/pages/vlib">
+					<span class="mui-icon-extra mui-icon-extra-dictionary"></span>
+					<div class="mui-media-body">我的词库</div></a></li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="/pages/vplan">
+					<span class="mui-icon-extra mui-icon-extra-topic"></span>
+					<div class="mui-media-body">背词计划</div></a></li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="/pages/vstart">
+					<span class="mui-icon-extra mui-icon-extra-classroom"></span>
+					<div class="mui-media-body">开始背词</div></a></li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="/pages/vset">
+					<span class="mui-icon-extra mui-icon-extra-new"></span>
+					<div class="mui-media-body">设置</div></a></li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="/pages/vabout">
+					<span class="mui-icon-extra mui-icon-extra-lamp"></span>
+					<div class="mui-media-body">关于软件</div></a></li>
+			</ul> 
+		</div>
+	</body>
+	<script src="/lib/mui/mui.min.js"></script>
+	<script>
+		mui.init({
+			swipeBack:true //启用右滑关闭功能
+		});
+	</script>
+</html>

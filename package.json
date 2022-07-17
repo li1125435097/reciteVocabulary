@@ -2,10 +2,11 @@
   "name": "recitevocabulary",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "./src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	  "start": "ENV=development DEBUG=recite* nodemon app.js"
+    "start": "ENV=development DEBUG=recite* nodemon app.js",
+    "prod": "ENV=production DEBUG=recite* nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -19,9 +20,10 @@
   },
   "homepage": "https://github.com/li1125435097/reciteVocabulary#readme",
   "dependencies": {
-    "express": "^4.18.1",
-	"debug": "^4.3.4"
+    "debug": "^4.3.4",
+    "koa": "^2.13.4",
+    "koa-router": "^11.0.1",
+    "koa-static": "^5.0.0"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
