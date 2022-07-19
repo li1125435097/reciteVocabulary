@@ -1,5 +1,5 @@
 const router = new Router({prefix:'/pages'})
-const fs = require('fs')
+import { readFileSync } from 'fs'
 let files = {}
 
 // 空路径返回缓存的html文件列表
@@ -21,7 +21,7 @@ router.get('/:page', function (ctx) {
 // html文件获取函数，初次加载时html文件加载到内存
 function loadFile(fname){ 
     if(!files[fname]){
-        let html = fs.readFileSync(Join(V,fname+'.html'))
+        let html = readFileSync(Join(VIEWS,fname+'.html'))
         files[fname] = html 
     }
     return files[fname] 
