@@ -1,5 +1,5 @@
 const router = new Router({prefix:'/pages'})
-import { readFileSync } from 'fs'
+const { readFileSync } = require('fs') 
 let files = {}
 
 // 空路径返回缓存的html文件列表

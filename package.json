@@ -2,11 +2,12 @@
   "name": "recitevocabulary",
   "version": "1.0.0",
   "description": "",
-  "main": "./src/server.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "npx babel src -wd dist-dev",
     "start": "ENV=development DEBUG=recite* nodemon app.js",
+    "dev": "ENV=development DEBUG=recite* nodemon ./dist-dev/server.js",
     "prod": "ENV=production DEBUG=recite* nodemon ./build/server.min.js",
     "build": "npx webpack"
   },
@@ -25,7 +26,8 @@
     "debug": "^4.3.4",
     "koa": "^2.13.4",
     "koa-router": "^11.0.1",
-    "koa-static": "^5.0.0"
+    "koa-static": "^5.0.0",
+    "sqlite3": "^5.0.11"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

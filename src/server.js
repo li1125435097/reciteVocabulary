@@ -1,5 +1,4 @@
-const debug = require('debug')('recite:server')
-import { join } from 'path'
+const { join } = require('path')
 const koa = require('koa')
 const router = require('koa-router')
 
@@ -10,8 +9,10 @@ const ROOT_PATH = process.cwd()
 global.Router = router
 global.Join = join
 global.l = console.log
+global.el = console.error
 global.VIEWS = join(ROOT_PATH,'views')
 global.PUBLIC = join(ROOT_PATH,'public')
+require('./orm/db.main')
 
 
 // 路由挂载
@@ -20,7 +21,7 @@ app.use(require('./controller/pages'))
 
 
 // 服务器启动
-app.listen(3000,function(){	debug('服务在3000端口启动成功') })
+app.listen(3000,function(){	l('服务在3000端口启动成功') })
 
 
 
