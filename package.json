@@ -2,13 +2,15 @@
   "name": "recitevocabulary",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "npx babel src -wd dist-dev",
-    "start": "ENV=development DEBUG=recite* nodemon app.js",
-    "dev": "ENV=development DEBUG=recite* nodemon ./dist-dev/server.js",
-    "prod": "ENV=production DEBUG=recite* nodemon ./build/server.min.js",
+    "start": "ENV=development nodemon ./src/server.js",
+    "dev": "ENV=development nodemon ./dist-dev/server.js",
+    "prod": "ENV=production nodemon ./build/server.min.js",
+    "importData": "FPATH=./public/核心词汇.csv CLASSIFY=核心词汇 nodemon ./script/importData.js",
+    "exportData": "FPATH=./public/核心词汇.csv CLASSIFY=核心词汇 nodemon ./script/exportData.js",
     "build": "npx webpack"
   },
   "repository": {
@@ -23,7 +25,6 @@
   },
   "homepage": "https://github.com/li1125435097/reciteVocabulary#readme",
   "dependencies": {
-    "debug": "^4.3.4",
     "koa": "^2.13.4",
     "koa-router": "^11.0.1",
     "koa-static": "^5.0.0",

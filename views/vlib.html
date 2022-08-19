@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>考研词汇通</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="/lib/mui/mui.min.css"> <!--标准mui.css-->
+		<link rel="stylesheet" type="text/css" href="/lib/mui/app.css"/> <!--App自定义的css-->
+		<style>
+			.title{
+				margin: 20px 15px 7px;
+				color: #6d6d72;
+				font-size: 15px;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">我的词库</h1>
+		</header>
+		<div class="mui-content">
+		  <div class="title">我的词库一览</div>
+			<div class="mui-card" style="margin-bottom: 35px;">
+				<ul class="mui-table-view routeview1"></ul>
+			</div>
+			<div class="title">共享词库一览</div>
+			<div class="mui-card" style="margin-bottom: 35px;">
+				<ul class="mui-table-view routeview2"></ul>
+			</div>
+		</div>
+	</body>
+	<script src="/lib/mui/mui.min.js"></script>
+	<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script>
+		mui.init({swipeBack:true}) //启用右滑关闭功能
+		const l = console.log
+		$(async function(){
+			//let datas = await $.get('/getlibs')
+			//render(datas)
+			render(['核心词汇'])
+			render2(['核心词汇','红花词'])
+		})
+
+		// 我的词库列表渲染函数
+		function render(datas){
+			let html = []
+			datas.map(v=>{html.push(`<li class="mui-table-view-cell"><a class="mui-navigate-right">${v}</a></li>`)})
+			$('.routeview1').html(html.join(""))
+		}
+
+		// 共享词库列表渲染函数
+		function render2(datas){
+			let html = []
+			datas.map(v=>{html.push(`<li class="mui-table-view-cell">${v}<button type="button" onclick="addlib()" class="mui-btn">添加</button></li>`)})
+			$('.routeview2').html(html.join(""))
+		}
+		
+		// 添加按钮事件响应函数
+		function addlib(){
+			let lib = event.target.parentNode.textContent.slice(0,-2)
+			l(lib)
+		}
+	</script>
+</html>

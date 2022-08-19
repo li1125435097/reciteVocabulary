@@ -8,16 +8,16 @@
 		<link rel="stylesheet" href="/lib/mui/mui.min.css">
 		<link rel="stylesheet" href="/lib/mui/icons-extra.css">
 		<style>
+			*{color: #555;}
 			.mui-content{height: 100vh;display: flex;align-items: center;flex-direction: column;justify-content: center;}
 			.myheader{font-size: 32px;line-height: 32px;margin-bottom: 30px;}
+			.day{color:#19b934;}
 		</style>
 	</head>
 
 	<body>
-
-		
 		<div class="mui-content">
-			<div class="myheader">高效背单词</div>
+			<div class="myheader">考研倒计时 <span class="day">&emsp;&emsp;&emsp;</span> 天</div>
 			<ul class="mui-table-view mui-grid-view mui-grid-9">
 				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="/pages/vlib">
 					<span class="mui-icon-extra mui-icon-extra-dictionary"></span>
@@ -28,7 +28,7 @@
 				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="/pages/vstart">
 					<span class="mui-icon-extra mui-icon-extra-classroom"></span>
 					<div class="mui-media-body">开始背词</div></a></li>
-				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="/pages/vset">
+				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="/pages/vsetting">
 					<span class="mui-icon-extra mui-icon-extra-new"></span>
 					<div class="mui-media-body">设置</div></a></li>
 				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="/pages/vabout">
@@ -38,9 +38,10 @@
 		</div>
 	</body>
 	<script src="/lib/mui/mui.min.js"></script>
+	<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<script>
-		mui.init({
-			swipeBack:true //启用右滑关闭功能
-		});
+		mui.init({swipeBack:true}) //启用右滑关闭功能	
+		let kaoyan = Math.floor((new Date('2022-12-25').getTime() - Date.now())/1000/86400)
+		$('.day').text(kaoyan)
 	</script>
 </html>
