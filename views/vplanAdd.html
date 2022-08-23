@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>考研词汇通</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="/lib/mui/mui.min.css">
+		
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">新增计划</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui-card" style="padding:10px">
+				<ul class="mui-table-view">
+					<form class="mui-input-group">
+						<h5>请输入计划名称：</h5>
+						<input type="text" name="name" class="mui-input-clear" placeholder="计划1"><br>
+						
+						<h5>请选择学习方式：</h5>
+						<div class="type"></div><br>
+						
+						<h5>请选择词库(可多选)：</h5>
+						<div class="libs"></div><br>
+						
+						<h5>请选择一天要背单词数：</h5>
+						<select class="mui-btn mui-btn-block" name="num">
+							<option value="30">30个</option>
+							<option value="40">40个</option>
+							<option value="50" selected>50个</option>
+							<option value="70">70个</option>
+							<option value="100">100个</option>
+						</select>
+
+						<div class="mui-button-row">
+							<button class="mui-btn mui-btn-primary" type="button" onclick="add()">提交计划</button>
+						</div>
+					</form>
+						
+				</ul>
+			</div>
+		</div>
+		<script src="/lib/mui/mui.min.js"></script>
+		<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<script>
+			mui.init({swipeBack:true}) //启用右滑关闭功能
+			const l = console.log
+			$(async function(){
+				let datas = await $.get('/libs')
+				renderSelect('.type',[{name:'学习',vals:0,selected:true},{name:'复习',vals:1}])
+				renderSelect('.libs',datas.mylibs||[],'checkbox')
+			})
+
+			// 单复选框渲染函数
+			function renderSelect(ele,datas,type='radio'){
+				let html = []
+				datas.map(v=>{
+					html.push(`<li class="mui-table-view-cell mui-${type} mui-left"><input name="${ele.slice(1)}" value='${v.vals}' ${v.selected ? 'checked' : ''} type="${type}">${v.name||v.vals}</li>`)
+				})
+				$(ele).html(html.join(""))
+			}		
+
+			// 新增计划事件响应函数
+			async function add(){
+				let formEle = $(event.target.parentNode.parentNode)
+				let payload = formEle.serialize()
+				if(!payload.match('libs')) return alert('词库最少选择一个')
+				let result = await $.post('/plan/add',payload)
+				if(!result.status) location.href=document.referrer
+				else alert(result.msg)
+			}
+
+			
+		</script>
+	</body>
+
+</html>

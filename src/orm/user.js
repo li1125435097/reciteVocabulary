@@ -12,18 +12,12 @@ const profix = 'orm/user/'
 async function create(data){
   let {user,pwd} = data
   let isExist = await userExist(user)
-  if(isExist) return {error:1,msg:'该用户名已被注册'}
+  if(isExist) return {status:1,msg:'该用户名已被注册'}
   
   pwd = md5(pwd)
   let sql = `insert into ${tableName} values(${getTimestamp()},'${user}','${pwd}','','1','')`
   let result = await execSql(sql).catch((err)=>printErrlog(profix,'create',err))
-  return result ? {error:0,msg:'注册成功'} : {error:1,msg:'注册失败，请稍后再试'}
-}
-
-async function del(user){
-  let sql = `delete from ${tableName} where user='${user}'`
-  let result = await execSql(sql).catch((err)=>printErrlog(profix,'del',err))
-  return result
+  return result ? {status:0,msg:'注册成功'} : {status:1,msg:'注册失败，请稍后再试'}
 }
 
 function del(condition){

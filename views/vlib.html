@@ -10,12 +10,7 @@
 		<link rel="stylesheet" href="/lib/mui/mui.min.css"> <!--标准mui.css-->
 		<link rel="stylesheet" type="text/css" href="/lib/mui/app.css"/> <!--App自定义的css-->
 		<style>
-			.title{
-				margin: 20px 15px 7px;
-				color: #6d6d72;
-				font-size: 15px;
-			}
-			
+			.title{margin: 20px 15px 7px;color: #6d6d72;font-size: 15px;}
 		</style>
 	</head>
 	<body>
@@ -40,30 +35,27 @@
 		mui.init({swipeBack:true}) //启用右滑关闭功能
 		const l = console.log
 		$(async function(){
-			//let datas = await $.get('/getlibs')
-			//render(datas)
-			render(['核心词汇'])
-			render2(['核心词汇','红花词'])
+			let {libs,mylibs} = await $.get('/libs')
+			let mylib = mylibs.map(v=>v.vals)
+			let lib = libs.map(v=>v.classify).filter(v=>!mylib.includes(v))
+			render('.routeview1','移除',mylib)
+			render('.routeview2','添加',lib)
 		})
 
-		// 我的词库列表渲染函数
-		function render(datas){
+		// 词库列表渲染函数
+		function render(ele,text,datas){
 			let html = []
-			datas.map(v=>{html.push(`<li class="mui-table-view-cell"><a class="mui-navigate-right">${v}</a></li>`)})
-			$('.routeview1').html(html.join(""))
-		}
-
-		// 共享词库列表渲染函数
-		function render2(datas){
-			let html = []
-			datas.map(v=>{html.push(`<li class="mui-table-view-cell">${v}<button type="button" onclick="addlib()" class="mui-btn">添加</button></li>`)})
-			$('.routeview2').html(html.join(""))
+			datas.map(v=>{html.push(`<li class="mui-table-view-cell">${v}<button type="button" onclick="operationLib('${text}')" class="mui-btn">${text}</button></li>`)})
+			$(ele).html(html.join(""))
 		}
 		
-		// 添加按钮事件响应函数
-		function addlib(){
+		// 添加删除按钮事件响应函数
+		async function operationLib(text){
 			let lib = event.target.parentNode.textContent.slice(0,-2)
-			l(lib)
+			let url = text==='添加' ? '/libs/add' : '/libs/del'
+			let result = await $.get(url,{lib})
+			if(!result.status) location.reload()
+			else alert(result.msg)
 		}
 	</script>
 </html>

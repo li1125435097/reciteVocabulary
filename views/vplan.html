@@ -7,9 +7,11 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-
 		<link rel="stylesheet" href="/lib/mui/mui.min.css">
-		
+		<style>
+			.exec{background-color: #c2df9c;color: #555 !important;}
+			.general{background-color:#a8bcff;}
+		</style>
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
@@ -17,52 +19,56 @@
 			<h1 class="mui-title">背词计划</h1>
 		</header>
 		<div class="mui-content">
+			<div class="mui-text-right" style="margin: 15px 10px 0 0;"><button class="mui-btn" type="button" onclick="location.href='/pages/vplanAdd'">新增计划</button></div>
 			<div class="mui-card">
-				<ul class="mui-table-view">
-					<li class="mui-table-view-cell mui-collapse">
-						<a class="mui-navigate-right" href="#">表单</a>
-						<div class="mui-collapse-content">
-							<form class="mui-input-group">
-								<div class="mui-input-row">
-									<label>Input</label>
-									<input type="text" placeholder="普通输入框">
-								</div>
-								<div class="mui-input-row">
-									<label>Input</label>
-									<input type="text" class="mui-input-clear" placeholder="带清除按钮的输入框">
-								</div>
-		
-								<div class="mui-input-row mui-plus-visible">
-									<label>Input</label>
-									<input type="text" class="mui-input-speech mui-input-clear" placeholder="语音输入">
-								</div>
-								<div class="mui-button-row">
-									<button class="mui-btn mui-btn-primary" type="button" onclick="return false;">确认</button>&nbsp;&nbsp;
-									<button class="mui-btn mui-btn-primary" type="button" onclick="return false;">取消</button>
-								</div>
-							</form>
-						</div>
-					</li>
-					
-				</ul>
+				<ul class="mui-table-view List"></ul>
 			</div>
 		</div>
 		<script src="/lib/mui/mui.min.js"></script>
 		<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<script>
 			mui.init({swipeBack:true}) //启用右滑关闭功能
+			const l = console.log
 			$(async function(){
-				//let datas = await $.get('/getlibs')
-				//render(datas)
-				render(['核心词汇'])
+				let datas = await $.get('/plan')
+				renderLs('.List',datas.plans || [],datas.planing[0] && datas.planing[0].vals)
 			})
 
-			function render(datas){
+			// 执行计划响应事件函数
+			async function exec(name){
+				let result = await $.get('/plan/exec',{name})
+				if(!result.status) location.reload()
+				else alert(result.msg)
+			}
+
+			// 删除计划响应事件函数
+			async function del(name){
+				let result = await $.get('/plan/del',{name})
+				if(!result.status) location.reload()
+				else alert(result.msg)
+			}
+
+			function renderLs(ele,datas,exec){
 				let html = []
-				datas.map(v=>{
-					html.push(`<li class="mui-table-view-cell"><a class="mui-navigate-right">${v}</a></li>`)
+				let changIndex = -1
+				datas.map((v,i)=>{
+					let active = exec===v.name
+					if(active) changIndex=i
+					html.push(`<li class="mui-table-view-cell mui-collapse">
+						<a class="mui-navigate-right${active ? ' exec' : ' general'}" href="#">${v.name}</a>
+						<div class="mui-collapse-content">
+							<h5>学习方式：${v.type===0 ? '学习' : '复习'}</h5>
+							<h5>词库：${v.libs}</h5>
+							<h5>每天要背单词数：${v.num}</h5>
+							<div class="mui-button-row">
+								<button class="mui-btn mui-btn-primary" type="button" onclick="exec('${v.name}')" ${active ? 'disabled' : ''}>执行</button>&nbsp;&nbsp;
+								<button class="mui-btn mui-btn-warning" type="button" onclick="del('${v.name}')"}>删除计划</button>
+							</div>
+						</div>
+					</li>`)
 				})
-				$('.routeview').html(html.join(""))
+				if(changIndex != -1){let mid = html[changIndex];html[changIndex]=html[0];html[0]=mid}
+				$(ele).html(html.join(""))
 			}
 		</script>
 	</body>

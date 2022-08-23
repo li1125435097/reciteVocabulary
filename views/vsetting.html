@@ -17,24 +17,20 @@
 			<h1 class="mui-title">设置</h1>
 		</header>
 		<div class="mui-content">
-			改功能暂未开发完成......
+			<div class="mui-button-row">
+				<button class="mui-btn mui-btn-warning" type="button" onclick="logout()">&emsp;&emsp;退出登录&emsp;&emsp;</button>
+			</div>
 		</div>
 		<script src="/lib/mui/mui.min.js"></script>
 		<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<script>
 			mui.init({swipeBack:true}) //启用右滑关闭功能
-			$(async function(){
-				//let datas = await $.get('/getlibs')
-				//render(datas)
-				//render(['核心词汇'])
-			})
-
-			function render(datas){
-				let html = []
-				datas.map(v=>{
-					html.push(`<li class="mui-table-view-cell"><a class="mui-navigate-right">${v}</a></li>`)
-				})
-				$('.routeview').html(html.join(""))
+			async function logout(){
+				let result = $.get('/user/logout')
+				if(!result.status){
+					alert('退出成功')
+					location.href = '/pages/login'
+				} 
 			}
 		</script>
 	</body>
