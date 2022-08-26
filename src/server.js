@@ -23,11 +23,13 @@ require('./orm')
 // 路由挂载
 app.use(require('koa-static')(PUBLIC,{maxage:1000*86400*1e5}))
 app.use(require('./middleware/filter'))
-app.use(bodyParser())
+app.use(bodyParser({limit:1024*5}))
 app.use(require('./controller/user'))
 app.use(require('./controller/pages'))
 app.use(require('./controller/libs'))
 app.use(require('./controller/plan'))
+app.use(require('./controller/start'))
+app.use(require('./controller/subset'))
 
 
 // 错误处理
@@ -35,7 +37,7 @@ app.use((ctx)=>ctx.body='<h1>欢迎访问单词背诵网站</h1><h1>有问题联
 app.on('error', (err, ctx)=>{el('服务器出错: ', err, ctx)})
 
 // 服务器启动
-app.removeAllListeners
+// app.removeAllListeners
 app.listen(3000,function(){	l('服务在3000端口启动成功') })
 
 

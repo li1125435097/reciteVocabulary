@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    #A,#B{
+      width: calc(50% - 10px);
+      height: 50vh;
+      margin: 2vh 0;
+      resize: none;
+    }
+    #run{display: none;}
+  </style>
+  <title>数据库管理</title>
+</head>
+<body>
+  <div class="header">
+    <button onclick="runsql()" num="0">示例</button>
+  </div>
+  <div class="content">
+    <textarea id="A" placeholder="SQL函数编辑区"></textarea>
+    <textarea id="B" placeholder="执行结果显示区" readonly></textarea>
+  </div>
+  <div class="footer">
+    <button onclick="query(A.value)">查询</button>
+    <button onclick="A.value=''">清空</button>
+    <button onclick="save(A.value)">保存</button>
+    <button onclick="del()">删除</button>
+    <button onclick="print()">输出到控制台</button>
+    <button id="run" onclick="run(A.value)">运行</button>
+  </div>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+
+    // 全局变量
+    const toStr = JSON.stringify
+    const l = console.log
+    const header = $('.header')
+    const text = $('#A')
+    const fill = $('#B')
+    const url = ['/sqlite/query', '/sqlite/run', '/sqlite/sqltxt']
+    let sqls = []           // 缓存数据库脚本
+    let result = null       // 缓存查询结果
+    let selected = 0        // 记录当前选择的数据库脚本
+
+    $(function(){        
+      renderBtn()
+    })
+
+    // sql语句查询函数
+    async function query(sql){
+      if(sql.trim() == '') return fill.text("")
+      result = await $.get(url[0],{sql})
+      fill.text(toStr(result))
+    }
+
+    // sql语句运行函数
+    async function run(sql){
+      result = await $.get(url[1],{sql})
+      fill.text(toStr(result))
+    }
+
+    // 页头实例按钮执行函数
+    function runsql(){
+      let num = event.target.attributes.num.value
+      let sql = sqls[num].txt
+      selected = num
+      text.val(sql)
+      query(sql)
+    }
+
+    // 保存按钮执行函数
+    async function save(sql){
+      // let num = header.find('button').length
+      let name = prompt('请输入你要保存的名称')
+      let resp = await $.ajax({url:url[2],type:'put',data:{ name, sql }})      
+      resp ? location.reload() : alert('保存失败，请刷新后重试')
+    }
+
+    // 删除按钮，删除当前选择的数据库脚本
+    async function del(){
+      if(selected == 0) return alert('你没有点击脚本按钮')
+      const {id,name} = sqls[selected]
+      if(confirm(`确认删除${name}按钮吗？`)){
+        let resp = await $.ajax({url:url[2],type:'delete',data:{ id }})      
+        resp ? location.reload() : alert('删除失败，请刷新后重试')
+      }
+      
+    }
+
+    // 输出到控制台
+    function print(){
+      l(result)
+    }
+
+    // 渲染sql脚本按钮
+    async function renderBtn(){
+      let resp = await $.get(url[2])
+      resp.unshift({name:'示例',txt:'select * from dot where channel=1001'})
+      sqls = resp
+      let html = []
+      resp.map( (v,i) => {
+        if(i==0) return
+        html.push(`<button onclick="runsql()" num="${i}">${v.name}</button>`)
+      })
+      header.append(html.join("\n"))
+    }
+
+
+  </script>
+</body>
+</html>

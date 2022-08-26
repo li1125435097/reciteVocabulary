@@ -5,9 +5,10 @@ const router = new Router({prefix:'/user'})
 router.post('/login', async function (ctx) {
     const {user,pwd} = ctx.request.body
     if(!user || !pwd) return ctx.body = {status:1,msg:'账号密码为空'}
-    const isUser = await User.findCheckPwd(user,pwd)
-    if(isUser){
+    const userid = await User.findCheckPwd(user,pwd)
+    if(userid){
         ctx.session.user = user
+        ctx.session.userid = userid
         ctx.body = {status:0}
     }else ctx.body = {status:1,msg:'账号密码错误'}
 })
@@ -23,7 +24,10 @@ router.post('/register', async function (ctx) {
     const {user,pwd} = ctx.request.body
     if(!user || !pwd) return ctx.body = {status:1,msg:'账号密码为空'}
     const result = await User.create({user,pwd})
-    if(!result.status) ctx.session.user=user
+    if(!result.status){
+        ctx.session.user = user
+        ctx.session.userid = result.userid
+    }   
     ctx.body = result
 })
 

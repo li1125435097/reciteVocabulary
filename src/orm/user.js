@@ -1,10 +1,9 @@
 // CREATE TABLE IF NOT EXISTS user (
-//   ts INTEGER, 
-//   user CHAR(50) primary key, 
-//   pwd CHAR(50), 
-//   test CHAR(50), 
-//   status CHAR(50), 
-//   note CHAR(50))
+  // id INTEGER primary key AUTOINCREMENT, 
+  // ts INTEGER, 
+  // user CHAR(30) unique, 
+  // pwd CHAR(32), 
+  // status INTEGER
 
 const tableName = 'user'
 const profix = 'orm/user/'
@@ -15,9 +14,10 @@ async function create(data){
   if(isExist) return {status:1,msg:'该用户名已被注册'}
   
   pwd = md5(pwd)
-  let sql = `insert into ${tableName} values(${getTimestamp()},'${user}','${pwd}','','1','')`
+  let sql = `insert into ${tableName}(ts,user,pwd,status) values(${getTimestamp()},'${user}','${pwd}',1)`
   let result = await execSql(sql).catch((err)=>printErrlog(profix,'create',err))
-  return result ? {status:0,msg:'注册成功'} : {status:1,msg:'注册失败，请稍后再试'}
+  let userid = await find({user})
+  return result ? {status:0,userid:userid[0].id,msg:'注册成功'} : {status:1,msg:'注册失败，请稍后再试'}
 }
 
 function del(condition){
@@ -36,8 +36,8 @@ function find(...param){
 
 async function findCheckPwd(user,pwd){
   let [data] = await find({user:user})
-  if(data.length<1) return false
-  if(md5(pwd) === data.pwd && data.status === '1') return true
+  if(!data) return false
+  if(md5(pwd) === data.pwd && data.status === 1) return data.id
   return false
 }
 

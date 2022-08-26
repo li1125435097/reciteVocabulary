@@ -120,15 +120,16 @@
 
 				let user = $('[name=user]').val()
 				let pwd = $('[name=pwd]').val()
-				if(!user || !pwd) return alert('账号密码不能为空')
+				if(!user || !pwd) return mui.toast('账号密码不能为空')
 
 				let url = type==='登录' ? 'login' : 'register'
 				let result = await $.post('/user/'+url,{user,pwd})
 				if(!result.status){
-					alert(type+'成功')
-					location.href = '/pages/menu'
+					mui.toast(type+'成功')
+					if(type === '注册') setTimeout(function(){location.href = '/pages/menu'},1.5e3)
+					else location.href = '/pages/menu'
 				}
-				else alert(result.msg)
+				else mui.toast(result.msg)
 			}
 
 			async function register(){

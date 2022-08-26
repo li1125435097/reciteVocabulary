@@ -11,11 +11,12 @@
 		<style>
 			.exec{background-color: #c2df9c;color: #555 !important;}
 			.general{background-color:#a8bcff;}
+			.mui-progressbar{height: 10px;border-radius: 10px;}
 		</style>
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
-			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" onclick="location.href='/pages/menu'"></a>
 			<h1 class="mui-title">背词计划</h1>
 		</header>
 		<div class="mui-content">
@@ -25,50 +26,71 @@
 			</div>
 		</div>
 		<script src="/lib/mui/mui.min.js"></script>
+		<script src="/lib/js/localStorage.js"></script>
 		<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<script>
 			mui.init({swipeBack:true}) //启用右滑关闭功能
 			const l = console.log
 			$(async function(){
 				let datas = await $.get('/plan')
-				renderLs('.List',datas.plans || [],datas.planing[0] && datas.planing[0].vals)
+				if(datas && datas.plans && datas.plans.length>0) renderLs('.List',datas.plans)				
+				else mui.toast('暂无数据')
 			})
 
 			// 执行计划响应事件函数
-			async function exec(name){
-				let result = await $.get('/plan/exec',{name})
-				if(!result.status) location.reload()
-				else alert(result.msg)
+			function exec(id,name){
+				mui.confirm(`确认执行<${name}>计划吗？`,0,['是','否'],async (e)=>{
+					if(e.index == 0){
+						let result = await $.get('/plan/exec',{id})
+						if(!result.status){
+							location.reload()
+							addl('offset',0)
+							addl('planName',name)
+						}
+						else alert(result.msg)
+					}
+				})
 			}
 
 			// 删除计划响应事件函数
-			async function del(name){
-				let result = await $.get('/plan/del',{name})
-				if(!result.status) location.reload()
-				else alert(result.msg)
+			function del(id,name){
+				mui.confirm(`确认删除<${name}>计划吗？`,0,['是','否'],async (e)=>{
+					if(e.index == 0){
+						let result = await $.get('/plan/del',{id})
+						if(!result.status) location.reload()
+						else alert(result.msg)
+					}
+				})	
 			}
 
-			function renderLs(ele,datas,exec){
+			function renderLs(ele,datas){
 				let html = []
 				let changIndex = -1
 				datas.map((v,i)=>{
-					let active = exec===v.name
+					let active = v.status===0
 					if(active) changIndex=i
 					html.push(`<li class="mui-table-view-cell mui-collapse">
 						<a class="mui-navigate-right${active ? ' exec' : ' general'}" href="#">${v.name}</a>
 						<div class="mui-collapse-content">
+							<p class="mui-progressbar mui-progressbar-in"><span style="transform: translate3d(${v.offset*100/v.count-100}%, 0px, 0px);"></span></p>
 							<h5>学习方式：${v.type===0 ? '学习' : '复习'}</h5>
 							<h5>词库：${v.libs}</h5>
 							<h5>每天要背单词数：${v.num}</h5>
 							<div class="mui-button-row">
-								<button class="mui-btn mui-btn-primary" type="button" onclick="exec('${v.name}')" ${active ? 'disabled' : ''}>执行</button>&nbsp;&nbsp;
-								<button class="mui-btn mui-btn-warning" type="button" onclick="del('${v.name}')"}>删除计划</button>
+								<button class="mui-btn mui-btn-primary" type="button" onclick="exec(${v.id},'${v.name}')" ${active ? 'disabled' : ''}>执行</button>&nbsp;&nbsp;
+								<button class="mui-btn mui-btn-warning" type="button" onclick="del(${v.id},'${v.name}')" ${active ? 'disabled' : ''}>删除计划</button>
 							</div>
 						</div>
 					</li>`)
 				})
 				if(changIndex != -1){let mid = html[changIndex];html[changIndex]=html[0];html[0]=mid}
 				$(ele).html(html.join(""))
+			}
+
+			function parseOffset(note){
+				if(!note) return 0
+				let result = Object.fromEntries(note.split(',').map(v=>v.split(':'))).offset
+				return +result
 			}
 		</script>
 	</body>

@@ -14,6 +14,13 @@ global.getTimestamp = function(){
   return Math.round(Date.now()/1e3)
 }
 
+// 获取年月日时间戳
+global.getdayTimestamp = function(){
+  let date = new Date().toLocaleString().split(' ')[0]
+  let ts = new Date(date).getTime()
+  return ts
+}
+
 // sqlite操作命令异步封装
 global.operationSql = (sql) =>{
   return new Promise((resolve, reject) =>
@@ -86,10 +93,11 @@ function parseObjToWhere(criteria,conjunction,param='where'){
     condition = []
     dataLs.map(v=>{
       [key,value] = v
-      let isString = typeof value === 'string'
-      condition.push(isString ? `${key}='${value}'` : `${key}=${value}`)
+      if(typeof value === 'string') condition.push(`${key}='${value}'`)
+      else if(typeof value === 'number') condition.push(`${key}=${value}`)
+      else if(Array.isArray(value)) condition.push(`${key} in('${value.join("','")}')`)
     })
-    condition = param+' ' + condition.join(conjunction)
+    condition = condition.length > 0 ? param+' ' + condition.join(conjunction) : ''
     return condition
   }
 }
@@ -106,6 +114,20 @@ global.printErrlog = (profix,text,err) =>{
   el(head)
   el(err)
   el(foot)
+}
+
+// 解析note字符串成对象
+global.parseNote = function(note){
+  if(!note) return {}
+  let result = Object.fromEntries(note.split(',').map(v=>v.split(':')))
+  return result
+}
+
+// 对象序列化成note字符串成
+global.toNote = function(obj){
+  if(Object.keys(obj).length<1) return ''
+  let result = Object.entries({offset: '1', mybe: '2'}).map(v=>v.join(':')).join(',')
+  return result
 }
 
 // md5复合加密封装

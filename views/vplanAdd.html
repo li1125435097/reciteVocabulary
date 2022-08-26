@@ -54,7 +54,7 @@
 			$(async function(){
 				let datas = await $.get('/libs')
 				renderSelect('.type',[{name:'学习',vals:0,selected:true},{name:'复习',vals:1}])
-				renderSelect('.libs',datas.mylibs||[],'checkbox')
+				renderSelect('.libs',datas.mylibs?[...datas.mylibs,{vals:'疑难词'}]:[],'checkbox')
 			})
 
 			// 单复选框渲染函数

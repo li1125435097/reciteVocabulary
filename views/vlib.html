@@ -38,24 +38,34 @@
 			let {libs,mylibs} = await $.get('/libs')
 			let mylib = mylibs.map(v=>v.vals)
 			let lib = libs.map(v=>v.classify).filter(v=>!mylib.includes(v))
-			render('.routeview1','移除',mylib)
+			
+			render('.routeview1','移除',['疑难词','简单词',...mylib])
 			render('.routeview2','添加',lib)
 		})
 
 		// 词库列表渲染函数
 		function render(ele,text,datas){
 			let html = []
-			datas.map(v=>{html.push(`<li class="mui-table-view-cell">${v}<button type="button" onclick="operationLib('${text}')" class="mui-btn">${text}</button></li>`)})
+			datas.map(v=>{
+				if(['疑难词','简单词'].includes(v)) html.push(`<li class="mui-table-view-cell" onclick="location.href='/pages/vlibDetail?lib=${v}'">${v}</li>`)
+				else html.push(`<li class="mui-table-view-cell" onclick="location.href='/pages/vlibDetail?lib=${v}'">${v}<button type="button" onclick="operationLib('${text}')" class="mui-btn">${text}</button></li>`)
+			})
 			$(ele).html(html.join(""))
 		}
 		
 		// 添加删除按钮事件响应函数
-		async function operationLib(text){
+		function operationLib(text){
+			event.stopPropagation()
 			let lib = event.target.parentNode.textContent.slice(0,-2)
-			let url = text==='添加' ? '/libs/add' : '/libs/del'
-			let result = await $.get(url,{lib})
-			if(!result.status) location.reload()
-			else alert(result.msg)
+			mui.confirm(`确认${text}<${lib}>吗？`,0,['是','否'],async (e) =>{
+				if(e.index == 0){
+					let url = text==='添加' ? '/libs/add' : '/libs/del'
+					let result = await $.get(url,{lib})
+					if(!result.status) location.reload()
+					else mui.toast(result.msg)
+				}
+			})
 		}
 	</script>
 </html>
+

@@ -28,8 +28,8 @@
 			async function logout(){
 				let result = $.get('/user/logout')
 				if(!result.status){
-					alert('退出成功')
-					location.href = '/pages/login'
+					mui.toast('退出成功')
+					setTimeout(function(){location.href = '/pages/login'},1.5e3)
 				} 
 			}
 		</script>
