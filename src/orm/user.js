@@ -37,7 +37,7 @@ function find(...param){
 async function findCheckPwd(user,pwd){
   let [data] = await find({user:user})
   if(!data) return false
-  if(md5(pwd) === data.pwd && data.status === 1) return data.id
+  if(md5(pwd) === data.pwd && data.status === 1) return data
   return false
 }
 

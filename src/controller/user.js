@@ -5,10 +5,10 @@ const router = new Router({prefix:'/user'})
 router.post('/login', async function (ctx) {
     const {user,pwd} = ctx.request.body
     if(!user || !pwd) return ctx.body = {status:1,msg:'账号密码为空'}
-    const userid = await User.findCheckPwd(user,pwd)
-    if(userid){
-        ctx.session.user = user
-        ctx.session.userid = userid
+    const userobj = await User.findCheckPwd(user,pwd)
+    if(userobj){
+        ctx.session.user = userobj
+        ctx.session.userid = userobj.id
         ctx.body = {status:0}
     }else ctx.body = {status:1,msg:'账号密码错误'}
 })
@@ -25,11 +25,29 @@ router.post('/register', async function (ctx) {
     if(!user || !pwd) return ctx.body = {status:1,msg:'账号密码为空'}
     const result = await User.create({user,pwd})
     if(!result.status){
-        ctx.session.user = user
-        ctx.session.userid = result.userid
+        ctx.session.user = result
+        ctx.session.userid = result.id
     }   
     ctx.body = result
 })
+
+// 用户设置
+router
+    .put('/user', async function (ctx) {
+        const {nickname} = ctx.request.body
+        let result = await User.update({id:ctx.session.userid},{nickname})
+        if(!result.status){
+            ctx.body={status:0}
+            ctx.session.user.nickname = nickname
+        }
+        else ctx.body={status:1,msg:'操作失败，请刷新后再试'}
+    })
+    .get('/user', async function (ctx) {
+        const {nickname} = ctx.session.user
+        ctx.body = {status:0,data:{nickname}}
+    })
+
+
 
 
 module.exports = router.routes()

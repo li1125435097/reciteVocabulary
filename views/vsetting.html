@@ -18,6 +18,8 @@
 		</header>
 		<div class="mui-content">
 			<div class="mui-button-row">
+				<div style="margin: 25px 0;">我的昵称: <span class="nickname"></span></div>
+				<button class="mui-btn mui-btn-primary" type="button" onclick="change()">&emsp;&emsp;修改昵称&emsp;&emsp;</button>
 				<button class="mui-btn mui-btn-warning" type="button" onclick="logout()">&emsp;&emsp;退出登录&emsp;&emsp;</button>
 			</div>
 		</div>
@@ -25,6 +27,12 @@
 		<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<script>
 			mui.init({swipeBack:true}) //启用右滑关闭功能
+			const l = console.log
+			$(async function(){
+				let userdata = await $.get('/user/user')
+				if(!userdata.status) $('.nickname').text(userdata.data.nickname)
+			})
+
 			async function logout(){
 				let result = $.get('/user/logout')
 				if(!result.status){
@@ -32,6 +40,21 @@
 					setTimeout(function(){location.href = '/pages/login'},1.5e3)
 				} 
 			}
+
+			async function change(){
+				mui.prompt('',0,'请输入新昵称：', ['确定','取消'], async (e) => {
+					if (e.index == 0) {
+						let text = e.value.trim()
+						let result = $.ajax({url:'/user/user',type:'put',data:{nickname:text}})  
+						if(!result.status){
+							mui.toast('昵称修改成功')
+							setTimeout(function(){location.reload()},1e3)
+						}else mui.toast('昵称修改失败，请重试')
+					}
+				})
+			}
+
+
 		</script>
 	</body>
 

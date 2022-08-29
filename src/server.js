@@ -30,6 +30,7 @@ app.use(require('./controller/libs'))
 app.use(require('./controller/plan'))
 app.use(require('./controller/start'))
 app.use(require('./controller/subset'))
+app.use(require('./controller/sqlite'))
 
 
 // 错误处理

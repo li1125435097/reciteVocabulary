@@ -17,6 +17,7 @@ let tables = {
     id INTEGER primary key AUTOINCREMENT, 
     ts INTEGER, 
     user CHAR(30) unique, 
+    nickname CHAR(30) unique, 
     pwd CHAR(32), 
     status INTEGER
   )`,
