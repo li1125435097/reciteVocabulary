@@ -1,4 +1,4 @@
-const path = require('path');
+let externals = _externals();
 
 module.exports = {
   mode: 'production',
@@ -8,6 +8,17 @@ module.exports = {
   entry: './src/server.js',
   output: {
     filename: 'server.min.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: __dirname+'/dist/lib'
   },
-};
+  externals
+}
+
+function _externals() {
+  let manifest = require('./package.json');
+  let dependencies = manifest.dependencies;
+  let externals = {};
+  for (let p in dependencies) {
+    externals[p] = 'commonjs ' + p;
+  }
+  return externals;
+}

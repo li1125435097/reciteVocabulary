@@ -35,7 +35,7 @@ async function test(){
   result = await find()
   l(result)
 }
-test()
+// test()
 
 module.exports = {
   create,

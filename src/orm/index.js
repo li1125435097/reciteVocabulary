@@ -79,11 +79,10 @@ async function createTable(){
     let result = await operationSql(sql).catch(err=>el(table+'表创建失败：'+err))
     if(result) l(table+'表存在或创建成功')
   }
+  
+  execSql('PRAGMA foreign_keys = ON')   // 启动外键
+  execSql('CREATE UNIQUE INDEX unionIndex on aggregate (ts,userid,vid);')   // 创建统计表联合索引，用于添加更新操作
 }
 
-createTable()
 
-// execSql('PRAGMA foreign_keys = ON')   // 启动外键
-// execSql('CREATE UNIQUE INDEX unionIndex on aggregate (ts,userid,vid);')   // 创建统计表联合索引，用于添加更新操作
-require('./aggregate');
-
+module.exports = {dataPath,createTable}
