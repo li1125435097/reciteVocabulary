@@ -13,7 +13,7 @@ router.get('/:page', function (ctx) {
     let page = ctx.params['page']
     ctx.type = 'text/html'
     ctx.body = loadFile(page)
-    // files = {}            // 清空文件缓存，测试或开发环境时开启
+    files = {}            // 清空文件缓存，测试或开发环境时开启
 })
 
 

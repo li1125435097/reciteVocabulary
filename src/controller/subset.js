@@ -12,10 +12,10 @@ router.get('/', async function (ctx) {
     if(['疑难词','简单词'].includes(lib)){
         let ids = await Subset.find({userid:ctx.session.userid,type:['疑难词','简单词'].indexOf(lib)},'id')
         ids = ids.map(v=>v.id)
-        if(ids.length>0) datas = await Vocabulary.find({id:ids},'id,en,zh')
-    }else datas = await Vocabulary.find({classify:lib},'id,en,zh') 
+        if(ids.length>0) datas = await Vocabulary.find({id:ids},'id,en,zh,phonetic')
+    }else datas = await Vocabulary.find({classify:lib},'id,en,zh,phonetic') 
 
-    ctx.body = {datas}
+    ctx.body = {datas,tableName:lib}
 })
 
 // 用户添加单词到单词本

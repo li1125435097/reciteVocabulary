@@ -13,9 +13,10 @@
 	<body>
 		<header class="mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-			<h1 class="mui-title">我的词库</h1>
+			<h1 class="mui-title tableName"></h1>
 		</header>
 		<div class="mui-content">
+			<div style="text-align: right;margin:15px 10px;"><button type="button" onclick="exportlib()" class="mui-btn-success">导出词库</button></div>
 			<div class="mui-card" style="margin-bottom: 35px;">
 				<ul class="mui-table-view routeview"></ul>
 			</div>			
@@ -28,12 +29,15 @@
 		const l = console.log
 		$(async function(){
 			window.search = location.search.slice(1)		
-			let {datas} = await $.get('/subset',search)
-			render('.routeview',datas,search)
+			let {datas,tableName} = await $.get('/subset',search)
+			window.datas = datas
+			window.tableName = tableName
+			$('.tableName').text(tableName)
+			render('.routeview')
 		})
 
 		// 词库列表渲染函数
-		function render(ele,datas){
+		function render(ele){
 			if(datas.length === 0) return $(ele).html('<h3>暂无单词')
 			let html = []
 			if(search === 'lib=%E7%96%91%E9%9A%BE%E8%AF%8D' || search === 'lib=%E7%AE%80%E5%8D%95%E8%AF%8D') datas.map(v=>{html.push(`<li class="mui-table-view-cell"><span style="color:rgb(47, 205, 73)">${v.en}</span>&emsp;${v.zh}<button type="button" onclick="del(${v.id})" class="mui-btn">移除</button></li>`)})
@@ -44,13 +48,34 @@
 		// 添加删除按钮事件响应函数
 		function del(id){
 			let word = $(event.target.parentNode).find('span').text()
-			mui.confirm(`确认移除 ${word} 吗？`,0,['是','否'],async (e) =>{
+			mui.confirm(`确认移除< ${word} >吗？`,0,['是','否'],async (e) =>{
 				if(e.index == 0){
 					let result = await $.get('/subset/del',search+`&id=${id}`)
 					if(!result.status) location.reload()
 					else mui.toast(result.msg)
 				}
 			})
+		}
+
+		// 导出词库
+		function exportlib(){
+			mui.confirm(`确认要导出<${tableName}>吗？`,0,['是','否'],async (e) =>{
+				if(e.index == 0){
+					let csvData = datas
+					.map(v=>`${v.en},${v.phonetic},${v.zh}`)
+					.join('\n')
+					
+				//- 表格导出
+				let uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(csvData);
+				let link = document.createElement("a");
+				link.href = uri;
+				link.download =  `${tableName}.csv`;
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+				}
+			})
+			
 		}
 	</script>
 </html>

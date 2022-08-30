@@ -11,6 +11,7 @@
 		<link rel="stylesheet" type="text/css" href="/lib/mui/app.css"/> <!--App自定义的css-->
 		<style>
 			.title{margin: 20px 15px 7px;color: #6d6d72;font-size: 15px;}
+			.create{margin: 15px 10px;}
 		</style>
 	</head>
 	<body>
@@ -19,6 +20,10 @@
 			<h1 class="mui-title">我的词库</h1>
 		</header>
 		<div class="mui-content">
+			<div class="mui-text-right create" >
+				<button type="button" onclick="upload.click()" class="mui-btn">导入词库</button>
+				<input type="file" id='upload' style="display: none;" accept="text/csv" onchange="fileChange()">
+			</div>
 		  <div class="title">我的词库一览</div>
 			<div class="mui-card" style="margin-bottom: 35px;">
 				<ul class="mui-table-view routeview1"></ul>
@@ -36,6 +41,7 @@
 		const l = console.log
 		$(async function(){
 			let {libs,mylibs} = await $.get('/libs')
+			window.mylibs = mylibs
 			let mylib = mylibs.map(v=>v.vals)
 			let lib = libs.map(v=>v.classify).filter(v=>!mylib.includes(v))
 			
@@ -48,7 +54,7 @@
 			let html = []
 			datas.map(v=>{
 				if(['疑难词','简单词'].includes(v)) html.push(`<li class="mui-table-view-cell" onclick="location.href='/pages/vlibDetail?lib=${v}'">${v}</li>`)
-				else html.push(`<li class="mui-table-view-cell" onclick="location.href='/pages/vlibDetail?lib=${v}'">${v}<button type="button" onclick="operationLib('${text}')" class="mui-btn">${text}</button></li>`)
+				else html.push(`<li class="mui-table-view-cell" onclick="location.href='/pages/vlibDetail?lib=${v}'">${v}<button type="button" onclick="operationLib('${text}',${v.id})" class="mui-btn">${text}</button></li>`)
 			})
 			$(ele).html(html.join(""))
 		}
@@ -57,14 +63,38 @@
 		function operationLib(text){
 			event.stopPropagation()
 			let lib = event.target.parentNode.textContent.slice(0,-2)
+			let id = mylibs.filter(v=>v.vals===lib)
+			id = id ? id[0].id : null 
 			mui.confirm(`确认${text}<${lib}>吗？`,0,['是','否'],async (e) =>{
 				if(e.index == 0){
 					let url = text==='添加' ? '/libs/add' : '/libs/del'
-					let result = await $.get(url,{lib})
+					let result = await $.get(url,{lib,id})
 					if(!result.status) location.reload()
 					else mui.toast(result.msg)
 				}
 			})
+		}
+
+		// 数据上传事件响应函数
+		function fileChange(){
+			let file = event.target.files[0]
+			let name = file.name.slice(0,-4)
+			if(!file) return
+			const reader = new FileReader()
+			reader.readAsText(file)
+			reader.onload = async () => {
+				let data = reader.result
+				data = data
+					.replace(/\r/g,'')
+					.split('\n')
+					.map(v=>v&&v.split(','))
+					.filter(v=>v.length==3)
+					.map(v=>({en:v[0]||'',phonetic:v[1]||'',zh:v[2]||''}))
+				if(data.length<1) return mui.toast('无可用数据')
+				let result = await $.post('/libs/import',{data,name})
+				if(!result.status) location.reload()
+				else mui.toast(result.msg)
+			}
 		}
 	</script>
 </html>

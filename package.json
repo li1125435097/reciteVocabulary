@@ -11,7 +11,7 @@
     "deploy": "npx shipit prod deploy",
     "create_table_local": "ENV=development node ./script/dbcreate.js",
     "importData": "FPATH=./public/核心词汇.csv CLASSIFY=核心词汇 nodemon ./script/importData.js",
-    "exportData": "FPATH=./public/核心词汇.csv CLASSIFY=核心词汇 nodemon ./script/exportData.js",
+    "exportData": "FPATH=./public/核心词汇.csv CLASSIFY=核心词汇 nodemon ./script/exportData.js"
   },
   "repository": {
     "type": "git",
