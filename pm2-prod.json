@@ -1,0 +1,25 @@
+
+{
+  "apps" : [
+    {
+      "name" : "recite",
+      "script"  : "./lib/server.min.js",
+      "cwd" : "/var/apps/recite/current/",
+      "error_file" : "./log/err.log",
+      "out_file" : "./log/out.log",
+      "instances" : "1",
+      "exec_mode" : "fork",
+      "merge_logs"  : true,
+      "args" : "-p 3000",
+      "env": {
+        "ENV": "production",
+        "CREATETABLE":false
+      },
+      "env_production" : {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}
+
+

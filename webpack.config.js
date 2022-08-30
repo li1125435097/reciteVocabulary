@@ -8,7 +8,7 @@ module.exports = {
   entry: './src/server.js',
   output: {
     filename: 'server.min.js',
-    path: __dirname+'/dist/lib'
+    path: __dirname+'/build/lib'
   },
   externals
 }

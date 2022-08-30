@@ -20,6 +20,7 @@ global.VIEWS = join(ROOT_PATH,'views')
 global.PUBLIC = join(ROOT_PATH,'public')
 const DBPATH = require('./orm')
 const version = require('../package.json').version
+if(process.env.CREATETABLE) DBPATH.createTable()
 
 
 // 路由挂载

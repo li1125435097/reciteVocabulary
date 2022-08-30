@@ -2,7 +2,7 @@ require('./common')
 let sqlite3 = require('sqlite3')
 sqlite3 = sqlite3.verbose()
 let dataPath = process.env.ENV === 'production' 
-  ? '/www/data/sqlite/rvs.db' 
+  ? '/www/db/sqlite/rvs.db' 
   : 'ref/rvs.db'
 
 // 声明全局变量
