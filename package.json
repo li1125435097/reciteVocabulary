@@ -5,14 +5,13 @@
   "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ENV=development nodemon ./src/server.js",
-    "start": "ENV=development nodemon ./dist/lib/server.min.js",
+    "start": "ENV=development nodemon ./src/server.js",
     "prod": "ENV=production nodemon ./build/server.min.js",
+    "build": "npx webpack",
+    "deploy": "npx shipit prod deploy",
     "create_table_local": "ENV=development node ./script/dbcreate.js",
-    "create_table_prod": "ENV=production node ./script/dbcreate.js",
     "importData": "FPATH=./public/核心词汇.csv CLASSIFY=核心词汇 nodemon ./script/importData.js",
     "exportData": "FPATH=./public/核心词汇.csv CLASSIFY=核心词汇 nodemon ./script/exportData.js",
-    "build": "npx webpack"
   },
   "repository": {
     "type": "git",
