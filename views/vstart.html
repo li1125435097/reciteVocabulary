@@ -18,6 +18,9 @@
 			.en{color: rgb(47, 205, 73);margin-bottom: 25px;font-size: 38px;}
 			.phonetic,.zh{color: #555;font-size: 26px;margin-bottom: 10px;}
 			.mybtn{width: 100%;font-size: 24px;margin: 5px 0;}
+			.accuracy{color: #48d81c;box-shadow: 5px 5px 1px;}
+			.error{color: #f84343;box-shadow: 5px 5px 1px;}
+			.blank{height: 15px;}
 		</style>
 	</head>
 
@@ -128,6 +131,7 @@
 					</div>
 					<div class="btnLs">
 						${inhtml.join("\n")}
+						<div class='blank'></div>
 						<button class="mui-btn mui-btn-warning mybtn before" type="button" onclick="operateReview()" ${offset === 0 ? 'disabled' : '' }>上一个</button>
 						<button class="mui-btn mui-btn-danger mybtn" type="button" onclick="operate()">疑难词</button>
 						<button class="mui-btn mui-btn-primary mybtn after" type="button" onclick="operateReview()" disabled>${offset === datas.length-1 ? '完成' :'下一个'}</button>
@@ -163,14 +167,14 @@
 				let ele = $(event.target)
 				let isAccuracy = answer===data.zh
 				if(isAccuracy){
-					ele.addClass('mui-btn-success')
+					ele.addClass('accuracy')
 					if(offset < datas.length-1) setTimeout(function(){offset++;renderReview();addl('offset',offset)},500)
 					else $('.after')[0].disabled=false
 					if(submit.length < offset+1) submit.push({id:data.id,count:1,fail:0})
 				}
 				else{
-					ele.addClass('mui-btn-danger')
-					$($('.answers')[index]).addClass('mui-btn-success')
+					ele.addClass('error')
+					$($('.answers')[index]).addClass('accuracy')
 					$('.after')[0].disabled=false
 					if(submit.length < offset+1) submit.push({id:data.id,count:1,fail:1})
 				}
