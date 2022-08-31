@@ -53,6 +53,7 @@ router.get('/', async function (ctx) {
 // 用户完成当日的一个计划
 router.post('/study', async function (ctx) {
     let {ids} = ctx.request.body
+    ids = JSON.parse(ids)
     const {planing:{name,offset},userid} = ctx.session
     let result = await Plan.update({userid,name},{offset:offset+ids.length})
     for(const id of ids) await Aggregate.create({userid,id:id.id,count:1,fail:id.fail})

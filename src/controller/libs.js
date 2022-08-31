@@ -30,6 +30,7 @@ router.get('/del', async function (ctx) {
 // 用户导入词库
 router.post('/import', async function (ctx) {
     let {data,name} = ctx.request.body
+    data = JSON.parse(data)
     if(data.find(v=>Object.keys(v).length!==3) || !name) return ctx.body={status:1,msg:'恭喜你被拦截'}
     let result = await Vocabulary.createMany(data,name)
     Mix.create({userid:ctx.session.userid,mark:'libowner',vals:name})

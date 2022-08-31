@@ -64,7 +64,7 @@
 			event.stopPropagation()
 			let lib = event.target.parentNode.textContent.slice(0,-2)
 			let id = mylibs.filter(v=>v.vals===lib)
-			id = id ? id[0].id : null 
+			id = id[0] ? id[0].id : null 
 			mui.confirm(`确认${text}<${lib}>吗？`,0,['是','否'],async (e) =>{
 				if(e.index == 0){
 					let url = text==='添加' ? '/libs/add' : '/libs/del'
@@ -75,26 +75,45 @@
 			})
 		}
 
-		// 数据上传事件响应函数
+		// 数据上传事件响应函数  解析上传文件，支持unix和window系统
 		function fileChange(){
 			let file = event.target.files[0]
 			let name = file.name.slice(0,-4)
 			if(!file) return
-			const reader = new FileReader()
-			reader.readAsText(file)
-			reader.onload = async () => {
-				let data = reader.result
-				data = data
-					.replace(/\r/g,'')
-					.split('\n')
-					.map(v=>v&&v.split(','))
-					.filter(v=>v.length==3)
-					.map(v=>({en:v[0]||'',phonetic:v[1]||'',zh:v[2]||''}))
-				if(data.length<1) return mui.toast('无可用数据')
-				let result = await $.post('/libs/import',{data,name})
-				if(!result.status) location.reload()
-				else mui.toast(result.msg)
+			const readerUtf8 = new FileReader()
+			const readerGbk = new FileReader()
+			readerUtf8.readAsText(file)
+			readerGbk.readAsText(file,'gbk')
+
+			let isParse = false
+			readerUtf8.onload = () => {
+				let data = readerUtf8.result
+				if(data.match('�') || isParse) return
+				isParse = true
+				uploadFile(data,name)
 			}
+
+			readerGbk.onload = () => {
+				let data = readerGbk.result
+				if(data.match('�') || isParse) return
+				isParse = true
+				uploadFile(data,name)
+			}
+		}
+
+		
+		// 把合法数据提交
+		async function uploadFile(data,name){
+			data = data
+				.replace(/\r/g,'')
+				.split('\n')
+				.map(v=>v&&v.split(','))
+				.filter(v=>v.length==3)
+				.map(v=>({en:v[0]||'',phonetic:v[1]||'',zh:v[2]||''}))
+			if(data.length<1) return mui.toast('无可用数据')
+			result = await $.post('/libs/import',{data:JSON.stringify(data),name}).catch(err=>{mui.toast(JSON.stringify(err))})
+			if(!result.status) location.reload()
+			else mui.toast(result.msg)
 		}
 	</script>
 </html>

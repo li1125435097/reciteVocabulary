@@ -5,8 +5,8 @@
   "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ENV=development nodemon ./src/server.js",
-    "prod": "ENV=production nodemon ./build/server.min.js",
+    "start": "ENV=development CREATETABLE=false nodemon ./src/server.js",
+    "prod": "ENV=development nodemon ./build/lib/server.min.js",
     "build": "npx webpack",
     "deploy": "npx shipit prod deploy",
     "create_table_local": "ENV=development node ./script/dbcreate.js",
@@ -30,7 +30,7 @@
     "koa-router": "^11.0.1",
     "koa-session": "^6.2.0",
     "koa-static": "^5.0.0",
-    "sqlite3": "5.0.2"
+    "sqlite3": "^5.0.11"
   },
   "devDependencies": {
     "shipit-cli": "^5.3.0",

@@ -89,7 +89,7 @@
 					if(submit.length < offset+1) submit.push({id:data.id,count:1,fail:0})
 				}
 				if(text === '完成'){
-					let result = await $.post('/start/study',{ids:submit})
+					let result = await $.post('/start/study',{ids:JSON.stringify(submit)})
 					if(!result.status){
 						addl('offset',0)
 						mui.toast('棒棒哒，今天这个计划的任务完成啦')

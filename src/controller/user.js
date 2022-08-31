@@ -19,6 +19,11 @@ router.get('/logout', async function (ctx) {
     ctx.body = {status:0,msg:'退出成功'}
 })
 
+// 获取用户session
+router.get('/session', async function (ctx) {
+    ctx.body = {status:0,msg:ctx.session}
+})
+
 // 注册
 router.post('/register', async function (ctx) {
     const {user,pwd} = ctx.request.body

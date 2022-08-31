@@ -17,7 +17,7 @@ global.getTimestamp = function(){
 // 获取年月日时间戳
 global.getdayTimestamp = function(){
   let date = new Date().toLocaleString().split(' ')[0]
-  let ts = new Date(date).getTime()
+  let ts = new Date(date).getTime()/1e3
   return ts
 }
 

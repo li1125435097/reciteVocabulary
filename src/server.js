@@ -20,13 +20,12 @@ global.VIEWS = join(ROOT_PATH,'views')
 global.PUBLIC = join(ROOT_PATH,'public')
 const DBPATH = require('./orm')
 const version = require('../package.json').version
-if(process.env.CREATETABLE) DBPATH.createTable()
-
+if(process.env.CREATETABLE==='true') DBPATH.createTable()
 
 // 路由挂载
 app.use(require('koa-static')(PUBLIC,{maxage:1000*86400*1e5}))
 app.use(require('./middleware/filter'))
-app.use(bodyParser({limit:1024*5}))
+app.use(bodyParser({formLimit:'480kb'}))
 app.use(require('./controller/user'))
 app.use(require('./controller/pages'))
 app.use(require('./controller/libs'))
