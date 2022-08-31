@@ -146,7 +146,7 @@
 				if(text === '上一个' && offset > 0){offset--;renderReview()}
 				if(text === '下一个' && offset < datas.length-1){offset++;renderReview();addl('offset',offset)}
 				if(text === '完成'){
-					let result = await $.post('/start/study',{ids:submit})
+					let result = await $.post('/start/study',{ids:JSON.stringify(submit)})
 					if(!result.status){
 						addl('offset',0)
 						mui.toast('棒棒哒，今天这个计划的任务完成啦')
@@ -164,7 +164,8 @@
 				let isAccuracy = answer===data.zh
 				if(isAccuracy){
 					ele.addClass('mui-btn-success')
-					setTimeout(function(){offset++;renderReview();addl('offset',offset)},500)
+					if(offset < datas.length-1) setTimeout(function(){offset++;renderReview();addl('offset',offset)},500)
+					else $('.after')[0].disabled=false
 					if(submit.length < offset+1) submit.push({id:data.id,count:1,fail:0})
 				}
 				else{

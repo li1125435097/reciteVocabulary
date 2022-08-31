@@ -24,7 +24,7 @@ router.get('/', async function (ctx) {
     // 疑难词词库处理
     let hardIndex = libs.indexOf('疑难词')
     if(hardIndex !== -1){
-        let ids = await Subset.find({user:ctx.session.user,type:0},'id')
+        let ids = await Subset.find({user:ctx.session.user,type:0},'vid')
         ids = ids.map(v=>v.vid)
         if(ids.length>offset){
             let words = await Vocabulary.find({id:ids.slice(offset),status:1},'id,en,phonetic,zh')
