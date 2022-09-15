@@ -111,6 +111,7 @@
 			</div>
 		</div>
 		<script src="/lib/mui/mui.min.js"></script>
+		<script src="/lib/js/localStorage.js"></script>
 		<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<script>
 			const l = console.log
@@ -124,6 +125,7 @@
 				let url = type==='登录' ? 'login' : 'register'
 				let result = await $.post('/user/'+url,{user,pwd})
 				if(!result.status){
+					addl('offset',0)
 					mui.toast(type+'成功')
 					if(type === '注册') setTimeout(function(){location.href = '/pages/menu'},1.5e3)
 					else location.href = '/pages/menu'
