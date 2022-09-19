@@ -15,7 +15,8 @@
 			.mycontainer{height: calc(100vh - 64px);padding: 10px 20px;}
 			.content{height: 60%;display: flex;align-items: center;justify-content: center;flex-direction: column;}
 			.btnLs{height: 40%;}
-			.en{color: rgb(47, 205, 73);margin-bottom: 25px;font-size: 38px;}
+			.en{color: rgb(47, 205, 73);margin-bottom: 12px;font-size: 38px;}
+			.zh{color: #658567;font-size: 25px;}
 			.phonetic,.zh{color: #555;font-size: 26px;margin-bottom: 10px;}
 			.mybtn{width: 100%;font-size: 24px;margin: 5px 0;}
 			.accuracy{color: #48d81c;box-shadow: 5px 5px 1px;}
@@ -69,7 +70,7 @@
 						<div class="zh">${data.zh}</div>
 					</div>
 					<div class="btnLs">
-						<button class="mui-btn mui-btn-warning mybtn before" type="button" onclick="operate()" disabled=${offset === 0 ? true : false }>上一个</button>
+						<button class="mui-btn mui-btn-warning mybtn before" type="button" onclick="operate()" ${offset === 0 ? 'disabled' : '' }>上一个</button>
 						<button class="mui-btn mui-btn-royal mybtn" type="button" onclick="operate()">简单词</button>
 						<button class="mui-btn mui-btn-danger mybtn" type="button" onclick="operate()">疑难词</button>
 						<button class="mui-btn mui-btn-primary mybtn after" type="button" onclick="operate()">${offset === datas.length-1 ? '完成' :'下一个'}</button>
@@ -128,6 +129,7 @@
 				let html = `
 					<div class="content">
 						<div class="en">${data.en}</div>
+						<div class="zh">${data.phonetic}</div>
 					</div>
 					<div class="btnLs">
 						${inhtml.join("\n")}
