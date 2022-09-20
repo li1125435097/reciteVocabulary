@@ -50,6 +50,47 @@ router.get('/', async function (ctx) {
     ctx.body = {status:0,datas,interference}
 })
 
+
+// 智能复习返回单词
+router.get('/ai', async function (ctx) {
+    const {userid} = ctx.session
+
+    // 错误率加权个数,倒序排列
+    let ids = await Aggregate.find({userid},'vid,count() as num,sum(fail)*100/sum(count)*count() as total','group by vid order by total desc limit 30')
+    ids = ids.map(v=>v.vid)
+    
+    // 获取普通词库
+    let datas = await Vocabulary.find({id:ids},'id,en,phonetic,zh')
+    
+
+    // 复习时返回300个干扰中文
+    let words = await Vocabulary.find({status:1},'zh')
+    let randIndex = Math.round(Math.random()*(words.length-300))
+    let interference = words.slice(randIndex,randIndex+300).map(v=>v.zh)
+    
+    ctx.body = {status:0,datas,interference}
+})
+
+// 当天复习返回单词
+router.get('/day', async function (ctx) {
+    const {userid} = ctx.session
+
+    // 错误率加权个数,倒序排列
+    let ids = await Aggregate.find({userid,time:getDate()},'vid,date(ts,"unixepoch","localtime") as time,count() as num,sum(fail)*100/sum(count)*count() as total','group by vid order by total desc limit 30')
+    ids = ids.map(v=>v.vid)
+    
+    // 获取普通词库
+    let datas = await Vocabulary.find({id:ids},'id,en,phonetic,zh')
+
+    // 复习时返回300个干扰中文
+    let words = await Vocabulary.find({status:1},'zh')
+    let randIndex = Math.round(Math.random()*(words.length-300))
+    let interference = words.slice(randIndex,randIndex+300).map(v=>v.zh)
+    
+    ctx.body = {status:0,datas,interference}
+})
+
+
 // 用户完成当日的一个计划
 router.post('/study', async function (ctx) {
     let {ids} = ctx.request.body
@@ -59,6 +100,15 @@ router.post('/study', async function (ctx) {
     for(const id of ids) await Aggregate.create({userid,id:id.id,count:1,fail:id.fail})
     if(!result.status) ctx.body={status:0}
     else ctx.body={status:1,msg:'操作失败，请刷新后再试'}
+})
+
+// 用户完成当日的一个复习
+router.post('/review', async function (ctx) {
+    let {ids} = ctx.request.body
+    ids = JSON.parse(ids)
+    const {userid} = ctx.session
+    for(const id of ids) await Aggregate.create({userid,id:id.id,count:1,fail:id.fail})
+    ctx.body={status:0}
 })
 
 

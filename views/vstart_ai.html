@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>考研词汇通</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="/lib/mui/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="/lib/mui/app.css" />
+		<style>
+			.mui-progressbar{height: 10px;}
+			.mycontainer{height: calc(100vh - 64px);padding: 10px 20px;}
+			.content{height: 60%;display: flex;align-items: center;justify-content: center;flex-direction: column;}
+			.btnLs{height: 40%;}
+			.en{color: rgb(47, 205, 73);margin-bottom: 12px;font-size: 38px;}
+			.zh{color: #658567;font-size: 25px;}
+			.phonetic,.zh{color: #555;font-size: 26px;margin-bottom: 10px;}
+			.mybtn{width: 100%;font-size: 24px;margin: 5px 0;}
+			.accuracy{color: #48d81c;box-shadow: 5px 5px 1px;}
+			.error{color: #f84343;box-shadow: 5px 5px 1px;}
+			.blank{height: 15px;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">智能复习</h1>
+		</header>
+		<div class="mui-content">
+			<p class="mui-progressbar mui-progressbar-success"><span></span></p>
+			<div class="mui-demo-container mycontainer">
+				
+			</div>
+		</div>
+		<script src="/lib/mui/mui.min.js"></script>
+		<script src="/lib/js/localStorage.js"></script>
+		<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<script>
+			mui.init({swipeBack:true}) //启用右滑关闭功能
+			
+			const l = console.log
+			let datas = []
+			let offset = 0
+			let isReply = false
+			let submit = []
+			$(async function(){
+				let result = await $.get('/start/ai').catch(err=>mui.toast(err))
+				if(!result.status) datas=result.datas
+				else return mui.toast('数据获取失败')
+
+				window.interference = result.interference
+				renderReview()
+			})
+			
+			
+			// 学习页面按钮响应函数
+			async function operate(){
+				let result = $.get('/subset/add',{id:data.id,type})
+				if(!result.status){offset++;$('.after')[0].click();mui.toast(text+'添加成功')} 
+				else mui.toast(text+'添加失败')
+			}
+
+
+			// 渲染复习页面
+			function renderReview(){
+				window.data = datas[offset]
+				if(!data) return $('.mycontainer').html('该计划已完成或无数据')
+				let disturb = getRandData(interference)
+				let randIndex = getRandInt(4)
+				disturb.push(disturb[randIndex])
+				disturb[randIndex]=data.zh
+				isReply=false
+				
+				let inhtml = []
+				disturb.map(v=>{
+					inhtml.push(`<button class="mui-btn mui-btn mybtn answers" type="button" onclick="reply('${v}',${randIndex})"}>${v.split('.').pop()}</button>`)
+				})
+
+				let html = `
+					<div class="content">
+						<div class="en">${data.en}</div>
+						<div class="zh">${data.phonetic}</div>
+					</div>
+					<div class="btnLs">
+						${inhtml.join("\n")}
+						<div class='blank'></div>
+						<button class="mui-btn mui-btn-warning mybtn before" type="button" onclick="operateReview()" ${offset === 0 ? 'disabled' : '' }>上一个</button>
+						<button class="mui-btn mui-btn-danger mybtn" type="button" onclick="operate()">疑难词</button>
+						<button class="mui-btn mui-btn-primary mybtn after" type="button" onclick="operateReview()" disabled>${offset === datas.length-1 ? '完成' :'下一个'}</button>
+					</div>
+				`
+				$('.mycontainer').html(html)
+				mui(".mui-progressbar").progressbar({progress:Math.floor((offset+1)/datas.length*100)}).show()
+				$('.content').css('height','20%')
+				$('.btnLs').css('height','80%')
+			}
+
+			// 复习页面按钮响应函数
+			async function operateReview(){
+				let text = event.target.textContent
+				
+				if(text === '上一个' && offset > 0){offset--;renderReview()}
+				if(text === '下一个' && offset < datas.length-1){offset++;renderReview()}
+				if(text === '完成'){
+					let result = await $.post('/start/review',{ids:JSON.stringify(submit)})
+					if(!result.status){
+						mui.toast('棒棒哒，今天这个计划的任务完成啦')
+						Array.from($('.mybtn')).map(v=>v.disabled=true)
+						setTimeout(function(){history.back()},1.5e3)
+					}
+				}							
+			}
+
+			function reply(answer,index){
+				if(isReply) return
+				isReply = true
+				
+				let ele = $(event.target)
+				let isAccuracy = answer===data.zh
+				if(isAccuracy){
+					ele.addClass('accuracy')
+					if(offset < datas.length-1) setTimeout(function(){offset++;renderReview()},500)
+					else $('.after')[0].disabled=false
+					if(submit.length < offset+1) submit.push({id:data.id,count:1,fail:0})
+				}
+				else{
+					ele.addClass('error')
+					$($('.answers')[index]).addClass('accuracy')
+					$('.after')[0].disabled=false
+					if(submit.length < offset+1) submit.push({id:data.id,count:1,fail:1})
+				}
+			}
+			
+			// 获取随机数
+			function getRandData(data,num=4){
+				let length = data.length
+				let result = new Set()
+				while(result.size<num) result.add(getRandInt(length))
+				result = Array.from(result).map(v=>data[v])
+				return result
+			}
+
+			// 获取随机整数
+			function getRandInt(int){
+				return Math.round(Math.random()*int)
+			}
+		</script>
+	</body>
+
+</html>
