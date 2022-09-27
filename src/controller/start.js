@@ -56,7 +56,7 @@ router.get('/ai', async function (ctx) {
     const {userid} = ctx.session
 
     // 错误率加权个数,倒序排列
-    let ids = await Aggregate.find({userid},'vid,count() as num,sum(fail)*100/sum(count)*count() as total','group by vid order by total desc limit 30')
+    let ids = await Aggregate.find({userid},'vid,count() as num,sum(fail)*100/sum(count) as total','group by vid order by total desc limit 30')
     ids = ids.map(v=>v.vid)
     
     // 获取普通词库
@@ -76,7 +76,7 @@ router.get('/day', async function (ctx) {
     const {userid} = ctx.session
 
     // 错误率加权个数,倒序排列
-    let ids = await Aggregate.find({userid,time:getDate()},'vid,date(ts,"unixepoch","localtime") as time,count() as num,sum(fail)*100/sum(count)*count() as total','group by vid order by total desc limit 30')
+    let ids = await Aggregate.find({userid,time:getDate()},'vid,date(ts,"unixepoch","localtime") as time,count() as num,sum(fail)*100/sum(count) as total','group by vid order by total desc limit 30')
     ids = ids.map(v=>v.vid)
     
     // 获取普通词库
