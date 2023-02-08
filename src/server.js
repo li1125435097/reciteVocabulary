@@ -3,6 +3,7 @@ const koa = require('koa')
 const router = require('koa-router')
 const session = require('koa-session')
 const bodyParser = require('koa-bodyparser')
+const IA = require('./infrastructureAnalysis')
 
 
 // 定义全局变量
@@ -35,6 +36,8 @@ app.use(require('./controller/subset'))
 app.use(require('./controller/sqlite'))
 
 
+IA(app)
+
 // 错误处理
 app.use((ctx)=>ctx.body='<h1>欢迎访问单词背诵网站</h1><h1>有问题联系<3162853966@qq.com></h1>')
 app.on('error', (err, ctx)=>{el('服务器出错: ', err, ctx)})
@@ -48,6 +51,7 @@ app.listen(PORT,function(){
   l(`PORT: ${PORT}  \nENV: ${process.env.ENV} \nDBPATH: ${DBPATH.dataPath} \nVERSION: ${version}`) 
   l(sign)
 })
+
 
 
 
